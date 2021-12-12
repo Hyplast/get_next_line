@@ -1,23 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_strcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/06 17:38:36 by severi            #+#    #+#             */
-/*   Updated: 2021/12/12 16:49:10 by severi           ###   ########.fr       */
+/*   Created: 2021/11/11 03:04:57 by severi            #+#    #+#             */
+/*   Updated: 2021/11/30 12:59:27 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-
 #include "libft.h"
 
-#define BUFF_SIZE 32
-
-int	get_next_line(const int fd, char **line);
-
-#endif
+char	*ft_strcpy(char *dest, const char *src)
+{
+	dest = (char *)ft_memcpy(dest, src, (ft_strlen(src)));
+	dest[ft_strlen(src)] = '\0';
+	return (dest);
+}

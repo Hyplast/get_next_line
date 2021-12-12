@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_memalloc.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/06 17:38:36 by severi            #+#    #+#             */
-/*   Updated: 2021/12/12 16:49:10 by severi           ###   ########.fr       */
+/*   Created: 2021/11/07 23:24:23 by severi            #+#    #+#             */
+/*   Updated: 2021/11/08 00:16:53 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-
 #include "libft.h"
 
-#define BUFF_SIZE 32
+void	*ft_memalloc(size_t size)
+{
+	void	*mem;
 
-int	get_next_line(const int fd, char **line);
-
-#endif
+	mem = (void *) malloc(sizeof(*mem) * size);
+	if (mem != NULL)
+		ft_bzero(mem, size);
+	return (mem);
+}

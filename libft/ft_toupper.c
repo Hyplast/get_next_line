@@ -1,23 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_toupper.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/06 17:38:36 by severi            #+#    #+#             */
-/*   Updated: 2021/12/12 16:49:10 by severi           ###   ########.fr       */
+/*   Created: 2021/11/14 21:31:05 by severi            #+#    #+#             */
+/*   Updated: 2021/11/14 21:33:06 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-
 #include "libft.h"
 
-#define BUFF_SIZE 32
-
-int	get_next_line(const int fd, char **line);
-
-#endif
+int	ft_toupper(int c)
+{
+	if (c >= 'a' && c <= 'z')
+		c -= ('a' - 'A');
+	return (c);
+}

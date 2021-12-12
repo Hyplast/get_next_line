@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/06 17:38:36 by severi            #+#    #+#             */
-/*   Updated: 2021/12/12 16:49:10 by severi           ###   ########.fr       */
+/*   Created: 2021/11/08 00:29:35 by severi            #+#    #+#             */
+/*   Updated: 2021/11/30 12:15:41 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-
 #include "libft.h"
 
-#define BUFF_SIZE 32
+void	*ft_memset(void *s, int c, size_t len)
+{
+	size_t			i;
+	unsigned char	*bytes;
 
-int	get_next_line(const int fd, char **line);
-
-#endif
+	i = 0;
+	bytes = (unsigned char *)s;
+	while (i < len)
+		bytes[i++] = (unsigned char)c;
+	return ((void *)bytes);
+}

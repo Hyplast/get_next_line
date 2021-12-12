@@ -1,0 +1,10 @@
+Hello,
+
+This is a test file
+For testing needs.
+Any other purpose than testing,
+will be undefined
+
+Tx!
+
+
