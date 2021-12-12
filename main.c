@@ -6,7 +6,7 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/12 17:38:40 by severi            #+#    #+#             */
-/*   Updated: 2021/12/12 19:10:29 by severi           ###   ########.fr       */
+/*   Updated: 2021/12/12 23:06:01 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,39 @@ int	main(void)
 "will be allowed to stay\n", "\n"}
 	char **line;
 */
-	char **line;
-	int res = 1;
-	line = malloc(4096);
-	while (res)
+	char *line;
+	int out;
+	int p[2];
+	int fd;
+
+	out = dup(1);
+	pipe(p);
+
+	fd = 1;
+	dup2(p[1], fd);
+	write(1, "abc\ndef\nghi\njkl\n", 16);
+	dup2(out, fd);
+	close(p[1]);
+	
+	printf("TEST: GET_NEXT_LINE: \n");
+	printf("TEST1: ");
+	for (int i = 0; i < 3; i++)
+	{
+		get_next_line(p[0], &line);
+		printf(" line0%i: %s", i, line);
+	}
+	printf(" :TEST END\n");
+//	int res = 1;
+// line = malloc(4096);
+	
+		
+/*	while (res)
 	{
 		res = get_next_line(1, line);
 		//ft_putstr_fd(line, 1);
 	}
-	
-	FILE *fptr;
+*/	
+/*	FILE *fptr;
 
 	fptr = fopen("tests/test_file.txt", "r");
 	if (fptr == NULL)
@@ -42,5 +65,5 @@ int	main(void)
 		return (-1);
 
 	fclose(fptr);
-	return (0);
+*/	return (0);
 }

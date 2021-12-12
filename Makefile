@@ -11,7 +11,7 @@ OBJ  = $(SRC:.c=.o)
 
 CC = clang
 
-CFLAGS =  -Wall -Wextra -Werror -I libft/ 
+CFLAGS = -g -Wall -Wextra -Werror -I libft/ 
 
 .PHONY: clean fclean all
 
