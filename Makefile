@@ -1,3 +1,14 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: severi <marvin@42.fr>                      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/12/13 16:25:04 by severi            #+#    #+#              #
+#    Updated: 2021/12/13 16:36:42 by severi           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
 NAME = test_gnl
 
@@ -7,29 +18,31 @@ SRC = get_next_line.c main.c
 
 INC = libft.h get_next_line.h
 
+INCLIB = libft/includes
+
+LIBDIR = libft/
+
 OBJ  = $(SRC:.c=.o)
 
 CC = clang
 
-CFLAGS = -g -Wall -Wextra -Werror -I libft/ 
-
-.PHONY: clean fclean all
+CFLAGS = -g -Wall -Wextra -Werror -Wconversion
 
 all: $(NAME)
 
 $(NAME): $(LIB)
-	@$(CC) $(CFLAGS) -o get_next_line.o -c get_next_line.c
-	@$(CC) $(CFLAGS) -o main.o -c main.c
-	@$(CC) -o $(NAME) main.o get_next_line.o -I libft/ -L libft/ -lft
+	$(CC) $(CFLAGS) -I $(INCLIB) -o get_next_line.o -c get_next_line.c
+	$(CC) $(CFLAGS) -I $(INCLIB) -o main.o -c main.c
+	$(CC) -g -o $(NAME) $(OBJ) -I $(INCLIB) -L $(LIBDIR) -lft
 
 $(LIB):
-	@make -C libft/ fclean && make -C libft/
+	make -C $(LIBDIR) fclean && make -C $(LIBDIR)
 
 clean:
-	@rm -f $(OBJ)
+	rm -f $(OBJ)
 
 fclean: clean
-	@rm -f $(NAME)
+	rm -f $(NAME)
 
 re: fclean all
 
@@ -37,3 +50,4 @@ so:
 	$(CC) -nostartfiles -fPIC $(CFLAGS) $(SRC)
 	gcc -nostartfiles -shared -o libft.so $(OBJ)
 
+.PHONY: clean fclean all

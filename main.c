@@ -6,7 +6,7 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/12 17:38:40 by severi            #+#    #+#             */
-/*   Updated: 2021/12/12 23:06:01 by severi           ###   ########.fr       */
+/*   Updated: 2021/12/14 14:22:53 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,25 @@ int	main(void)
 	close(p[1]);
 	
 	printf("TEST: GET_NEXT_LINE: \n");
-	printf("TEST1: ");
-	for (int i = 0; i < 3; i++)
+	printf("TEST 1: ");
+	for (int i = 0; i < 4; i++)
 	{
 		get_next_line(p[0], &line);
 		printf(" line0%i: %s", i, line);
 	}
 	printf(" :TEST END\n");
+
+	write(fd, "aaa", 3);
+	close(p[1]);
+	dup2(out, fd);
+	printf("TEST 2: ");
+	get_next_line(p[0], &line);
+	printf(" get_next_line() = \"%s\" ", line);
+	printf(" :TEST END\n");
+	
 //	int res = 1;
+//
+//
 // line = malloc(4096);
 	
 		
