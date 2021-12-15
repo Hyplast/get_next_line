@@ -2,7 +2,7 @@
 # Own
 test_gnl
 *.swp
-
+*.DS*
 # Prerequisites
 *.d
 

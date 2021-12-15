@@ -1,0 +1,74 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tests_advanced_main.test                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: saaltone <saaltone@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/02 13:44:55 by saaltone          #+#    #+#             */
+/*   Updated: 2021/12/02 14:35:19 by saaltone         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef GNL_TESTS_H
+
+# define GNL_TESTS_H
+# define COLOR_GREEN "\033[0;32m"
+# define COLOR_RED "\033[0;31m"
+# define COLOR_PURPLE "\033[0;35m"
+# define COLOR_CYAN "\033[0;36m"
+# define COLOR_RESET "\033[0m"
+
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
+#include <fcntl.h>
+
+int	get_next_line(const int fd, char **line);
+
+#endif
+
+int	main(void)
+{
+	char 	*line;
+	int		fd;
+	int		fd2;
+
+	printf("%s%s%s", COLOR_CYAN, "1. Opening 2 files, reading 2 lines from both in parallel.", COLOR_RED);
+
+	fd = open("testfiles/multifd_1", O_RDONLY);
+	fd2 = open("testfiles/multifd_2", O_RDONLY);
+
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "AAAA"))
+		printf("%s%s%s", COLOR_GREEN, "Line 1 from file 1 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 1 from file 1 KO ", COLOR_RED);
+
+	get_next_line(fd2, &line);
+
+	if (!strcmp(line, "1234"))
+		printf("%s%s%s", COLOR_GREEN, "Line 1 from file 2 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 1 from file 2 KO ", COLOR_RED);
+
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "BBBB"))
+		printf("%s%s%s", COLOR_GREEN, "Line 2 from file 1 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 2 from file 1 KO ", COLOR_RED);
+
+	get_next_line(fd2, &line);
+
+	if (!strcmp(line, "5678"))
+		printf("%s%s%s", COLOR_GREEN, "Line 2 from file 2 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 2 from file 2 KO ", COLOR_RED);
+
+	close(fd);
+	close(fd2);
+
+	return (0);
+}

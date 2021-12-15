@@ -6,7 +6,7 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:38:17 by severi            #+#    #+#             */
-/*   Updated: 2021/12/14 14:17:57 by severi           ###   ########.fr       */
+/*   Updated: 2021/12/15 14:32:58 by ssavukos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,11 @@ int			get_next_line(const int fd, char **line)
 	int			i;
 	static char	*static_var;
 	char		*sto;
+	char		*sto2;
 	static int	fnc_called;
+	size_t		stat_len;
 
-	
+	stat_len = 0;
 	ft_putnbr(fnc_called++);
 	ft_putstr(" - called this many times\n");
 	r_bytes = 1;
@@ -53,12 +55,18 @@ int			get_next_line(const int fd, char **line)
 			static_var++;
 		if((i = ft_fnd_endl(static_var)) != -1)
 		{
-			*line = ft_strncpy(*line, static_var, (size_t)i);
+			sto = ft_strnew((size_t)i);
+			sto = ft_strncpy(sto, static_var, (size_t)i);
+			*line = ft_strdup(sto);
+			ft_strdel(&sto);
 			static_var = ft_strchr(static_var, '\n');
 			return (1);
 		}
-		
-
+		else 
+		{
+			i = 0;
+			stat_len = ft_strlen(static_var);
+		}
 	}
 	while (r_bytes > 0)
 	{
@@ -68,12 +76,20 @@ int			get_next_line(const int fd, char **line)
 		{
 			i++;
 		}
+		sto = ft_strnew((size_t)i + stat_len);
+		if (stat_len > 0)
+		{
+			sto = ft_strcpy(sto, static_var);
+		}
 		if (buf[i] == '\0' || buf[i] == '\n')
 		{
-			*line = ft_strncpy(*line, buf, (size_t)i);
-			if ((sto = ft_strchr(buf, '\n')) != NULL)
+			sto = ft_strncpy(sto + stat_len, buf, (size_t)i);
+			*line = ft_strdup(sto);
+			ft_strdel(&sto);
+			if ((sto2 = ft_strchr(buf, '\n')) != NULL)
 			{
-				static_var = ft_strdup(sto);
+				static_var = ft_strdup(++sto2);
+				//ft_strdel(&sto2);
 			}	
 			return (1);
 		}

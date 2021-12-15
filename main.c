@@ -6,7 +6,7 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/12 17:38:40 by severi            #+#    #+#             */
-/*   Updated: 2021/12/14 14:22:53 by severi           ###   ########.fr       */
+/*   Updated: 2021/12/15 14:21:47 by ssavukos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ int	main(void)
 	}
 	printf(" :TEST END\n");
 
-	write(fd, "aaa", 3);
+	dup2(p[1], fd);
+	write(1, "aaa", 3);
 	close(p[1]);
 	dup2(out, fd);
 	printf("TEST 2: ");
