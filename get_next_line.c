@@ -6,14 +6,14 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:38:17 by severi            #+#    #+#             */
-/*   Updated: 2021/12/15 14:32:58 by ssavukos         ###   ########.fr       */
+/*   Updated: 2021/12/20 21:49:38 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include "libft.h"
 
-int static	ft_fnd_endl(const char *s)
+static int	ft_fnd_endl(const char *s)
 {
 	int	end;
 	int	loc;

@@ -6,20 +6,35 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/12 17:38:40 by severi            #+#    #+#             */
-/*   Updated: 2021/12/15 14:21:47 by ssavukos         ###   ########.fr       */
+/*   Updated: 2021/12/20 22:13:02 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 
-int	main(void)
+int	main(int argc, char *argv[])
 {
 	/*char **str = {"Hello, this is my world\n", 
 "and my world only. Those who can read\n", 
 "will be allowed to stay\n", "\n"}
 	char **line;
 */
+	int read = 1;
+	if (argc == 2)
+	{
+		char *copy;
+		FILE *fptr;
+		fptr = fopen(argv[1], "r");
+		if (fptr == NULL)
+			exit(EXIT_FAILURE);
+		copy = (char*)fptr;
+		while((read = get_next_line(1 ,&copy)) != 0)
+		{
+			printf("%s", copy);
+		}
+		fclose(fptr);
+	}
 	char *line;
 	int out;
 	int p[2];
