@@ -6,7 +6,7 @@
 #    By: severi <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/13 16:25:04 by severi            #+#    #+#              #
-#    Updated: 2021/12/13 16:36:42 by severi           ###   ########.fr        #
+#    Updated: 2021/12/27 12:31:54 by severi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ OBJ  = $(SRC:.c=.o)
 
 CC = clang
 
-CFLAGS = -g -Wall -Wextra -Werror -Wconversion
+CFLAGS = -g -fsanitize=address -Wall -Wextra -Werror -Wconversion
 
 all: $(NAME)
 
