@@ -6,7 +6,7 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/12 17:38:40 by severi            #+#    #+#             */
-/*   Updated: 2021/12/30 14:30:13 by severi           ###   ########.fr       */
+/*   Updated: 2021/12/30 16:34:33 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,26 @@ int	main(int argc, char *argv[])
 			printf(" returned 0");
 	}
 	printf(" :TEST END\n");
+
+// /
 /*
+	i = 1;
+	j = 1;
 	dup2(p[1], fd);
-	write(1, "aaa", 3);
+	write(fd, "aaa", 3);
 	close(p[1]);
 	dup2(out, fd);
 	printf("TEST 2: ");
 	get_next_line(p[0], &line);
 	printf(" get_next_line() = \"%s\" ", line);
+	get_next_line(p[0], &line);
+	printf(" get_next_line() = \"%s\" ", line);
+
+
 	printf(" :TEST END\n");
-	*/
+
+
+*/
 //	int res = 1;
 //
 //
