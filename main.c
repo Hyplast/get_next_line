@@ -6,7 +6,7 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/12 17:38:40 by severi            #+#    #+#             */
-/*   Updated: 2021/12/20 22:13:02 by severi           ###   ########.fr       */
+/*   Updated: 2021/12/30 14:30:13 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,9 @@ int	main(int argc, char *argv[])
 	int out;
 	int p[2];
 	int fd;
-
+	int i = -1;
+	int j = 0;
+	
 	out = dup(1);
 	pipe(p);
 
@@ -51,13 +53,16 @@ int	main(int argc, char *argv[])
 	
 	printf("TEST: GET_NEXT_LINE: \n");
 	printf("TEST 1: ");
-	for (int i = 0; i < 4; i++)
+	while (i != 0)
 	{
-		get_next_line(p[0], &line);
-		printf(" line0%i: %s", i, line);
+		i = get_next_line(p[0], &line);
+		if (i != 0)
+			printf(" line0%i: %s", j++, line);
+		else
+			printf(" returned 0");
 	}
 	printf(" :TEST END\n");
-
+/*
 	dup2(p[1], fd);
 	write(1, "aaa", 3);
 	close(p[1]);
@@ -66,7 +71,7 @@ int	main(int argc, char *argv[])
 	get_next_line(p[0], &line);
 	printf(" get_next_line() = \"%s\" ", line);
 	printf(" :TEST END\n");
-	
+	*/
 //	int res = 1;
 //
 //
