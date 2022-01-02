@@ -6,7 +6,7 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:38:17 by severi            #+#    #+#             */
-/*   Updated: 2022/01/01 23:21:00 by severi           ###   ########.fr       */
+/*   Updated: 2022/01/02 02:08:52 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static int	ft_look_for_nl(char **static_var, char **line)
 		if (*static_var[0] == '\0')
 		{
 			*static_var = NULL;
-			static_var = NULL;
+			ft_strdel(static_var);
 		}
 		return (0);
 	}
@@ -41,45 +41,53 @@ static int	ft_look_for_nl(char **static_var, char **line)
 	return (1);
 }
 
-static void	ft_add_to_static(char **static_var, char *cpy_from)
+static void	ft_add_to_static(char **static_var, char *buf)
 {
 	char	*sto;
 
 	if (*static_var == NULL)
-		*static_var = ft_strdup(cpy_from);
+		*static_var = ft_strdup(buf);
 	else
 	{
-		sto = ft_strjoin(*static_var, cpy_from);
+		sto = ft_strjoin(*static_var, buf);
 		*static_var = ft_strdup(sto);
 		ft_strdel(&sto);
 	}
+	buf = NULL;
+	ft_strdel(&buf);
+}
+
+static void	ft_set_and_free(char **static_var, char **line)
+{
+	*line = ft_strdup(*static_var);
+	*static_var = NULL;
+	ft_strdel(static_var);
 }
 
 int	get_next_line(const int fd, char **line)
 {
 	char		buf[BUFF_SIZE + 1];
 	int			i;
-	static char	*static_var;
+	static char	*static_var[4096];
 
 	if (fd < 0 || fd >= 4096 || line == NULL)
 		return (-1);
 	while (1)
 	{
-		i = ft_look_for_nl(&static_var, line);
+		i = ft_look_for_nl(&static_var[fd], line);
 		if (i == 1)
 			return (1);
 		i = (int)read(fd, buf, BUFF_SIZE);
-		buf[i] = '\0';
-		if (i == 0)
+		if (i == 0 || i == -1)
 		{
-			if (static_var != NULL)
+			if (static_var[fd] != NULL)
 			{
-				*line = ft_strdup(static_var);
-				static_var = NULL;
+				ft_set_and_free(&static_var[fd], line);
 				return (1);
 			}
-			return (0);
+			return (i);
 		}
-		ft_add_to_static(&static_var, buf);
+		buf[i] = '\0';
+		ft_add_to_static(&static_var[fd], buf);
 	}
 }

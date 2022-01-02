@@ -6,12 +6,15 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/12 17:38:40 by severi            #+#    #+#             */
-/*   Updated: 2022/01/01 22:02:15 by severi           ###   ########.fr       */
+/*   Updated: 2022/01/02 01:14:58 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "get_next_line.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include "libft.h"
 
 int	main(int argc, char *argv[])
@@ -25,26 +28,46 @@ int	main(int argc, char *argv[])
 	if (argc == 2)
 	{
 		char *copy;
-		FILE *fptr;
-		fptr = fopen(argv[1], "r");
-		if (fptr == NULL)
+		int fptr;
+		fptr = open(argv[1], O_RDONLY);
+		if (fptr < 0)
 			exit(EXIT_FAILURE);
-		copy = (char*)fptr;
-		while((read = get_next_line(1 ,&copy)) != 0)
+		
+		while((read = get_next_line(fptr ,&copy)) != 0)
 		{
-			printf("%s", copy);
+			printf("%s\n", copy);
 		}
-		fclose(fptr);
+		free(copy);
+		close(fptr);
 	}
 	char *line;
-	int out;
-	int p[2];
-	int fd;
+	//int out;
+	//int p[2];
+	//int fd;
 	int i = -1;
 	int j = 0;
 
-	char 	*str;
+	//char 	*str;
 	//int		gnl_ret;
+	int file_desc = open("tests/gnl7_2.txt", O_RDONLY);
+	
+	if (file_desc < 0)
+		printf("Error opening the file\n");
+	//printf("OPENED FILE CONTAINING: %s\n", file_desc);
+	while (i != 0)
+	{
+		i = get_next_line(file_desc, &line);
+		if (i != 0)
+			printf(" line0%i: %s", j++, line);
+		else
+			printf(" :returned *%i*", i);
+	}
+	printf("- call  once more: %i, ", get_next_line(file_desc, &line));
+	printf(" :TEST END\n");
+
+
+	close(file_desc);
+/*	
 
 	str = (char *)malloc(1000 * 1000);
 	*str = '\0';
@@ -75,7 +98,9 @@ int	main(int argc, char *argv[])
 	}
 	printf("- call  once more: %i, ", get_next_line(p[0], &line));
 	printf(" :TEST END\n");
-
+*/
+	free(line);
+//	free(str);
 /*	out = dup(1);
 	pipe(p);
 
