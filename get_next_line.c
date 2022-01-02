@@ -6,7 +6,7 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:38:17 by severi            #+#    #+#             */
-/*   Updated: 2022/01/02 02:08:52 by severi           ###   ########.fr       */
+/*   Updated: 2022/01/03 00:06:32 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ static int	ft_look_for_nl(char **static_var, char **line)
 		if (*static_var[0] == '\0')
 		{
 			*static_var = NULL;
-			ft_strdel(static_var);
 		}
 		return (0);
 	}
@@ -53,15 +52,13 @@ static void	ft_add_to_static(char **static_var, char *buf)
 		*static_var = ft_strdup(sto);
 		ft_strdel(&sto);
 	}
-	buf = NULL;
-	ft_strdel(&buf);
 }
 
-static void	ft_set_and_free(char **static_var, char **line)
+static int	ft_set_and_free(char **static_var, char **line)
 {
 	*line = ft_strdup(*static_var);
 	*static_var = NULL;
-	ft_strdel(static_var);
+	return (1);
 }
 
 int	get_next_line(const int fd, char **line)
@@ -81,10 +78,7 @@ int	get_next_line(const int fd, char **line)
 		if (i == 0 || i == -1)
 		{
 			if (static_var[fd] != NULL)
-			{
-				ft_set_and_free(&static_var[fd], line);
-				return (1);
-			}
+				return (ft_set_and_free(&static_var[fd], line));
 			return (i);
 		}
 		buf[i] = '\0';
