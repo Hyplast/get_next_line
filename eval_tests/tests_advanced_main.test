@@ -1,0 +1,238 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tests_advanced_main.test                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: saaltone <saaltone@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/02 13:44:55 by saaltone          #+#    #+#             */
+/*   Updated: 2021/12/02 14:35:19 by saaltone         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef GNL_TESTS_H
+
+# define GNL_TESTS_H
+# define COLOR_GREEN "\033[0;32m"
+# define COLOR_RED "\033[0;31m"
+# define COLOR_PURPLE "\033[0;35m"
+# define COLOR_CYAN "\033[0;36m"
+# define COLOR_RESET "\033[0m"
+
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
+#include <fcntl.h>
+
+int	get_next_line(const int fd, char **line);
+
+#endif
+
+int	main(void)
+{
+	char 	*line;
+	int		out;
+	int		pipe_ends[2];
+	int		fd;
+	int		gnl_return;
+
+	printf("%s%s%s", COLOR_CYAN, "1. 4 characters ending by new line from a file ", COLOR_RED);
+
+	fd = open("testfiles/advanced_1", O_RDONLY);
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "AAAA"))
+		printf("%s%s%s", COLOR_GREEN, "OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "KO ", COLOR_RED);
+
+	close(fd);
+
+	printf("%s%s%s", COLOR_CYAN, "\n2. Two lines of 4 characters ending by new line from a file ", COLOR_RED);
+
+	fd = open("testfiles/advanced_2", O_RDONLY);
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "AAAA"))
+		printf("%s%s%s", COLOR_GREEN, "Line 1 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 1 KO ", COLOR_RED);
+
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "BBBB"))
+		printf("%s%s%s", COLOR_GREEN, "Line 2 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 2 KO ", COLOR_RED);
+
+	close(fd);
+
+	printf("%s%s%s", COLOR_CYAN, "\n3. Three lines of 4 characters ending by new line from a file ", COLOR_RED);
+
+	fd = open("testfiles/advanced_3", O_RDONLY);
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "AAAA"))
+		printf("%s%s%s", COLOR_GREEN, "Line 1 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 1 KO ", COLOR_RED);
+
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "BBBB"))
+		printf("%s%s%s", COLOR_GREEN, "Line 2 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 2 KO ", COLOR_RED);
+	
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "CCCC"))
+		printf("%s%s%s", COLOR_GREEN, "Line 3 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 3 KO ", COLOR_RED);
+
+	close(fd);
+
+	printf("%s%s%s", COLOR_CYAN, "\n4. 4 characters ending by new line from standard output ", COLOR_RED);
+
+	fd = 1;
+
+	// Duplicating stdout fd
+	out = dup(fd);
+
+	// Piping pipe_ends[0] (read) pipe_ends[1] (write)
+	pipe(pipe_ends);
+
+	// Duplicating fd 1 to pipe_ends[1]
+	dup2(pipe_ends[1], fd);
+
+	// Write stuff to fd (stdout)
+	write(fd, "1234\n", 5);
+
+	// Duplicating fd to out
+	dup2(out, fd);
+
+	// Close the pipe (write)
+	close(pipe_ends[1]);
+
+	// Reading from p[0] with GNL (piped from p[1])
+	get_next_line(pipe_ends[0], &line);
+
+	if (!strcmp(line, "1234"))
+		printf("%s%s%s", COLOR_GREEN, "OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "KO ", COLOR_RED);
+
+	printf("%s%s%s", COLOR_CYAN, "\n5. Two lines of 4 characters ending by new line from standard output ", COLOR_RED);
+
+	out = dup(fd);
+	pipe(pipe_ends);
+
+	dup2(pipe_ends[1], fd);
+	write(fd, "AAAA\nBBBB\n", 10);
+	dup2(out, fd);
+	close(pipe_ends[1]);
+	get_next_line(pipe_ends[0], &line);
+
+	if (!strcmp(line, "AAAA"))
+		printf("%s%s%s", COLOR_GREEN, "Line 1 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 1 KO ", COLOR_RED);
+
+	get_next_line(pipe_ends[0], &line);
+
+	if (!strcmp(line, "BBBB"))
+		printf("%s%s%s", COLOR_GREEN, "Line 2 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 2 KO ", COLOR_RED);
+
+	printf("%s%s%s", COLOR_CYAN, "\n6. Three lines of 4 characters ending by new line from standard output ", COLOR_RED);
+
+	out = dup(fd);
+	pipe(pipe_ends);
+
+	dup2(pipe_ends[1], fd);
+	write(fd, "AAAA\nBBBB\nCCCC\n", 15);
+	dup2(out, fd);
+	close(pipe_ends[1]);
+	get_next_line(pipe_ends[0], &line);
+
+	if (!strcmp(line, "AAAA"))
+		printf("%s%s%s", COLOR_GREEN, "Line 1 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 1 KO ", COLOR_RED);
+
+	get_next_line(pipe_ends[0], &line);
+
+	if (!strcmp(line, "BBBB"))
+		printf("%s%s%s", COLOR_GREEN, "Line 2 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 2 KO ", COLOR_RED);
+
+	get_next_line(pipe_ends[0], &line);
+
+	if (!strcmp(line, "CCCC"))
+		printf("%s%s%s", COLOR_GREEN, "Line 3 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 3 KO ", COLOR_RED);
+
+	printf("%s%s%s", COLOR_CYAN, "\n7. 4 characters with no newline from a file ", COLOR_RED);
+
+	fd = open("testfiles/advanced_4", O_RDONLY);
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "AAAA"))
+		printf("%s%s%s", COLOR_GREEN, "OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "KO ", COLOR_RED);
+
+	printf("%s%s%s", COLOR_CYAN, "\n8. 8 characters with no newline from a file ", COLOR_RED);
+
+	fd = open("testfiles/advanced_5", O_RDONLY);
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "AAAABBBB"))
+		printf("%s%s%s", COLOR_GREEN, "Line 1 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 1 KO ", COLOR_RED);
+
+	close(fd);
+
+	printf("%s%s%s", COLOR_CYAN, "\n9. 16 characters with no newline from a file ", COLOR_RED);
+
+	fd = open("testfiles/advanced_6", O_RDONLY);
+	get_next_line(fd, &line);
+
+	if (!strcmp(line, "AAAABBBBCCCCDDDD"))
+		printf("%s%s%s", COLOR_GREEN, "Line 1 OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 1 KO ", COLOR_RED);
+
+	close(fd);
+
+	printf("%s%s%s", COLOR_CYAN, "\n10. Emty line from a file ", COLOR_RED);
+
+	fd = open("testfiles/advanced_7", O_RDONLY);
+	gnl_return = get_next_line(fd, &line);
+
+	if (!strcmp(line, "") && gnl_return == 1)
+		printf("%s%s%s", COLOR_GREEN, "Line 1 OK and returned 1", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "Line 1 KO ", COLOR_RED);
+
+	close(fd);
+
+	printf("%s%s%s", COLOR_CYAN, "\n11. Emty file ", COLOR_RED);
+
+	fd = open("testfiles/advanced_8", O_RDONLY);
+	gnl_return = get_next_line(fd, &line);
+
+	if (!gnl_return)
+		printf("%s%s%s", COLOR_GREEN, "Returned 0 for empty file", COLOR_RESET);
+	else
+		printf("%s%s%i%s%s", COLOR_RED, "Returned ", gnl_return, ", expected 0", COLOR_RESET);
+
+	close(fd);
+
+	return (0);
+}

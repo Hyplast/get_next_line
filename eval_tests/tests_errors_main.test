@@ -1,0 +1,64 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tests_advanced_main.test                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: saaltone <saaltone@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/02 13:44:55 by saaltone          #+#    #+#             */
+/*   Updated: 2021/12/02 14:35:19 by saaltone         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef GNL_TESTS_H
+
+# define GNL_TESTS_H
+# define COLOR_GREEN "\033[0;32m"
+# define COLOR_RED "\033[0;31m"
+# define COLOR_PURPLE "\033[0;35m"
+# define COLOR_CYAN "\033[0;36m"
+# define COLOR_RESET "\033[0m"
+
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
+#include <fcntl.h>
+
+int	get_next_line(const int fd, char **line);
+
+#endif
+
+int	main(void)
+{
+	char 	*line;
+	int		return_val;
+
+	printf("%s%s%s", COLOR_CYAN, "1. Testing with fd -1 ", COLOR_RED);
+
+	return_val = get_next_line(-1, &line);
+
+	if (return_val == -1)
+		printf("%s%s%s", COLOR_GREEN, "OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "KO ", COLOR_RED);
+
+	printf("%s%s%s", COLOR_CYAN, "\n2. Testing with fd 123 ", COLOR_RED);
+
+	return_val = get_next_line(123, &line);
+
+	if (return_val == -1)
+		printf("%s%s%s", COLOR_GREEN, "OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "KO ", COLOR_RED);
+
+	printf("%s%s%s", COLOR_CYAN, "\n3. Testing with fd 99999999 ", COLOR_RED);
+
+	return_val = get_next_line(99999999, &line);
+
+	if (return_val == -1)
+		printf("%s%s%s", COLOR_GREEN, "OK ", COLOR_RED);
+	else
+		printf("%s%s%s", COLOR_RED, "KO ", COLOR_RED);
+
+	return (0);
+}

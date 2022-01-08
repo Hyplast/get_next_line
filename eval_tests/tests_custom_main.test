@@ -1,0 +1,220 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tests_advanced_main.test                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: saaltone <saaltone@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/02 13:44:55 by saaltone          #+#    #+#             */
+/*   Updated: 2021/12/02 14:35:19 by saaltone         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef GNL_TESTS_H
+
+#define GNL_TESTS_H
+#define COLOR_GREEN "\033[0;32m"
+#define COLOR_RED "\033[0;31m"
+#define COLOR_PURPLE "\033[0;35m"
+#define COLOR_CYAN "\033[0;36m"
+#define COLOR_RESET "\033[0m"
+
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <time.h>
+
+int get_next_line(const int fd, char **line);
+
+#endif
+
+static void download_bible(void)
+{
+	printf("%s%s\n", COLOR_PURPLE, "Bible not found in testfiles. Downloading it from https://raw.githubusercontent.com/mxw/grmr/master/src/finaltests/bible.txt:");
+	system("curl -o testfiles/bible.txt https://raw.githubusercontent.com/mxw/grmr/master/src/finaltests/bible.txt");
+	printf("%s", COLOR_RESET);
+}
+
+static void copy_bible(void)
+{
+	printf("%s%s\n", COLOR_PURPLE, "Copy of bible not found. Copying bible to bible2.txt");
+	system("cp testfiles/bible.txt testfiles/bible2.txt");
+	printf("%s", COLOR_RESET);
+}
+
+int main(int ac, char **av)
+{
+	char 	*line;
+	char 	*line2;
+	char	line3[1000];
+	int 	gnl_return;
+	int 	fd;
+	int 	fd2;
+	int 	fd3;
+	FILE	*fd4;
+	size_t	fgets_line_len;
+	int		is_ko = 0;
+
+	time_t end_loop;
+	time_t start_loop = time(NULL);
+	int last_dot = 999;
+	long total_lines = 0;
+
+	if (ac != 3)
+	{
+		printf("%s%s%s\n", COLOR_RED, "Please give test durations as arguments (total of 2). I.e: ./gnl_tests.sh 7 120 20", COLOR_RESET);
+		return (0);
+	}
+
+	printf("%s%s%s%s\n", COLOR_CYAN, "[TEST 1]", COLOR_RESET, "\nOpening bible.txt to fd.");
+	fd = open("testfiles/bible.txt", O_RDONLY);
+
+	if (fd < 0)
+	{
+		download_bible();
+		fd = open("testfiles/bible.txt", O_RDONLY);
+	}
+
+	printf("%s%i%s\n", "Using GNL to get lines while in infinite loop for ", atoi(av[1]), " seconds.");
+	printf("%s%s%s%s%s%s%s%s\n", "To monitor memory usage, use ", COLOR_GREEN, "leaks tests_custom", COLOR_RESET, " and ", COLOR_GREEN, "top | grep tests_custom", COLOR_RESET);
+	printf("%s\n", "IMPORTANT: The program should not crash / segfault. Memory usage should not increase while running the process (leaks).");
+	printf("%s", COLOR_CYAN);
+
+	end_loop = start_loop + (time_t)atoi(av[1]);
+
+	while (start_loop < end_loop)
+	{
+		start_loop = time(NULL);
+		gnl_return = get_next_line(fd, &line);
+		if (gnl_return <= 0)
+		{
+			close(fd);
+			fd = open("testfiles/bible.txt", O_RDONLY);
+			// if (gnl_return == 0)
+			//	free(line);
+			continue;
+		}
+		total_lines++;
+		printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bTotal lines read: %9ld %s%s%4i%s", total_lines, COLOR_PURPLE, "Time: ", (int)(end_loop - start_loop), COLOR_CYAN);
+		fflush(stdout);
+		if (last_dot > (int)(end_loop - start_loop))
+		{
+			printf("\b\b\b%3i", (int)(end_loop - start_loop));
+			fflush(stdout);
+			last_dot = (int)(end_loop - start_loop);
+		}
+		// printf("%s\n", line);
+		free(line);
+	}
+
+	printf("%s%s%s", COLOR_GREEN, "  OK", COLOR_RESET);
+
+	printf("%s%s%s%s\n", COLOR_CYAN, "\n\n[TEST 2]", COLOR_RESET, "\nOpening repeating_lines to fd2. All lines of this file are the same.");
+
+	close(fd);
+	fd = open("testfiles/bible.txt", O_RDONLY);
+	fd2 = open("testfiles/repeating_line", O_RDONLY);
+
+	printf("%s%i%s\n", "Using GNL to get lines while in infinite loop for ", atoi(av[2]), " seconds from both bible.txt and repeating_line in parallel.");
+	printf("%s\n", "Also checking with strcmp that the lines from repeating_lines are correct.");
+	printf("%s", COLOR_CYAN);
+
+	start_loop = time(NULL);
+	end_loop = start_loop + (time_t)atoi(av[2]);
+	total_lines = 0;
+
+	while (start_loop < end_loop)
+	{
+		start_loop = time(NULL);
+		gnl_return = get_next_line(fd, &line);
+		if (gnl_return <= 0)
+		{
+			close(fd);
+			fd = open("testfiles/bible.txt", O_RDONLY);
+			// if (gnl_return == 0)
+			//	free(line);
+			continue;
+		}
+		free(line);
+		gnl_return = get_next_line(fd2, &line);
+		if (gnl_return <= 0)
+		{
+			close(fd2);
+			fd2 = open("testfiles/repeating_line", O_RDONLY);
+			// if (gnl_return == 0)
+			//	free(line);
+			continue;
+		}
+		if (!strcmp(line, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."))
+			total_lines++;
+		else
+		{
+			printf("%s%s%s%s", COLOR_RED, "  INCORRECT LINE FOUND: ", COLOR_RESET, line);
+			return (1);
+		}
+		printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bTotal lines checked: %9ld %s%s%4i%s", total_lines, COLOR_PURPLE, "Time: ", (int)(end_loop - start_loop), COLOR_CYAN);
+		fflush(stdout);
+		if (last_dot > (int)(end_loop - start_loop))
+		{
+			printf("\b\b\b%3i", (int)(end_loop - start_loop));
+			fflush(stdout);
+			last_dot = (int)(end_loop - start_loop);
+		}
+		free(line);
+	}
+
+	while (get_next_line(fd, &line) == 1);
+	while (get_next_line(fd2, &line) == 1);
+
+	close(fd);
+	close(fd2);
+
+	printf("%s%s%s", COLOR_GREEN, "  OK", COLOR_RESET);
+
+	printf("%s%s%s%s\n", COLOR_CYAN, "\n\n[TEST 3]", COLOR_RESET, "\nOpening 2 instance of bible.txt (bible.txt & bible2.txt). Looping through the files with GNL and libc function getline. Comparing results.");
+
+	fd3 = open("testfiles/bible.txt", O_RDONLY);
+	fd4 = fopen("testfiles/bible2.txt", "r");
+
+	if (fd3 < 0)
+	{
+		download_bible();
+		fd3 = open("testfiles/bible.txt", O_RDONLY);
+	}
+	
+	if (!fd4)
+	{
+		copy_bible();
+		fd4 = fopen("testfiles/bible2.txt", "r");
+	}
+
+	while (get_next_line(fd3, &line) == 1)
+	{
+		line2 = fgets(line3, 1000, fd4);
+		fgets_line_len = strlen(line2) - 1;
+		if (*line2 && line2[fgets_line_len] == '\n') 
+			line2[fgets_line_len] = '\0';
+		if (strcmp(line, line2))
+		{
+			printf("%s%s\n", COLOR_RED, "KO. Line from GNL:");
+			printf("%s\n", line);
+			printf("%s\n", "Line from fgets:");
+			printf("%s\n", line2);
+			is_ko = 1;
+			break ;
+		}
+		free(line);
+	}
+
+	printf("%s", COLOR_RESET);
+
+	if (!is_ko)
+		printf("%s%s%s", COLOR_GREEN, "OK: All lines were correct.", COLOR_RESET);
+	
+	close(fd3);
+	fclose(fd4);
+
+	return (0);
+}

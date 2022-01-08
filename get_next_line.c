@@ -6,7 +6,7 @@
 /*   By: severi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:38:17 by severi            #+#    #+#             */
-/*   Updated: 2022/01/08 02:17:25 by severi           ###   ########.fr       */
+/*   Updated: 2022/01/08 03:16:06 by severi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static int	ft_look_for_nl(char **static_var, char **line)
 	if (static_var[0][i] == '\0')
 	{	
 		if (*static_var[0] == '\0')
-			*static_var = NULL;
+			ft_strdel(static_var);
 		return (0);
 	}
 	sto = ft_strsub(*static_var, 0, (size_t)i);
